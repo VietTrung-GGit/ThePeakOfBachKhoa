@@ -6,6 +6,10 @@
   "author": "VietTrung <trung.nguyen06inf@hcmut.edu.vn>",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "release": "standard-version"
+  },
+  "devDependencies": {
+    "standard-version": "^9.5.0"
   }
 }
