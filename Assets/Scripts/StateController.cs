@@ -9,7 +9,6 @@ public class StateController : MonoBehaviour
     private State currentState;
 
     public PatrolState patrolState = new PatrolState();
-    //public FallState fallState = new FallState(); 
     public ThreatenedState threatenedState = new ThreatenedState();
     public ParalyzedState paralyzedState = new ParalyzedState();
 
