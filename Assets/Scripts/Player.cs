@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     private int moveInput;
     private int lastMoveInput;
     private int facingDirection = 1;
-    [SerializeField] private bool isSuperSprinting;
+    public bool isSuperSprinting;
     [Header("Jump")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpForceDouble;
