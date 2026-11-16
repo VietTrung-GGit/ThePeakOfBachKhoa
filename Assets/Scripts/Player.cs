@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
@@ -41,22 +42,30 @@ public class Player : MonoBehaviour
     [SerializeField] private float wallRunSpeed;
     [SerializeField] private float yWhenChangeDirection;
     [SerializeField] private bool isWallRunning;
+    
+    [Header("Camera Things")]
+    [SerializeField] private CameraFollow cameraFollow;
     private bool holdWall;
     private int wallDirection;
     private float oldGravity;
-
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         oldGravity = rb.gravityScale;
+        cameraFollow = cameraFollow.GetComponent<CameraFollow>();
     }
     private void Update() {
         checkInput();
         CheckCollision();
         if (moveInput != 0) {
-            facingDirection = moveInput;
-            if (sr != null)
+            if (moveInput != facingDirection)
+            {
+                facingDirection = moveInput;
+                cameraFollow.CallTurn();
+            }
+            if (sr != null){
                 sr.flipX = facingDirection < 0;
+            }
             if (wallCheck != null){
                 Vector3 p = wallCheck.localPosition;
                 p.x = Mathf.Abs(p.x) * facingDirection;
@@ -179,5 +188,9 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(wallCheck.position, sizeWall);
         Gizmos.DrawLine(transform.position,new Vector2(transform.position.x,transform.position.y + DistanceFromHeadToCeiling));
+    }
+    public bool isFacingRight()
+    {
+        return facingDirection > 0;
     }
 }
