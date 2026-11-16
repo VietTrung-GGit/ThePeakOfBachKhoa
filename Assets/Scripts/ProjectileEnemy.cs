@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileEnemy : MonoBehaviour
+public class ProjectileEnemy : Enemy
 {
     [Range(0.0f, 5.0f)]
     [Tooltip("Cooldown every time this character shoots projectiles.")]
@@ -27,7 +27,7 @@ public class ProjectileEnemy : MonoBehaviour
         }
     }
 
-    private void Update()
+    protected override void UpdateLogic()
     {
         if (!isReadyToShoot)
         {
@@ -39,26 +39,27 @@ public class ProjectileEnemy : MonoBehaviour
             }
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+
+    public void OnShootTriggerEnter2D(OnTriggerDelegation delegation)
     {
         Debug.Log("Object entered trigger area!");
-        if (collision.CompareTag("Player"))
+        if (delegation.Other.CompareTag("Player"))
         {
             if (isReadyToShoot)
             {
-                ShootProjectile(collision.gameObject);
+                ShootProjectile(delegation.Other.gameObject);
                 isReadyToShoot = false;
             }
         }
     }
 
-    private void OnTriggerStay2D(Collider2D collision)
+    public void OnShootTriggerStay2D(OnTriggerDelegation delegation)
     {
-        if (collision.CompareTag("Player"))
+        if (delegation.Other.CompareTag("Player"))
         {
             if (isReadyToShoot)
             {
-                ShootProjectile(collision.gameObject);
+                ShootProjectile(delegation.Other.gameObject);
             }
         }
     }

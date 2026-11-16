@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Enemy))]
 public class StateController : MonoBehaviour
 {
-    private Enemy targetEnemy;
+    private GroundEnemy targetEnemy;
     //private IState currentState;
     private State currentState;
 
@@ -14,7 +14,7 @@ public class StateController : MonoBehaviour
 
     private void Awake()
     {
-        targetEnemy = GetComponent<Enemy>();
+        targetEnemy = GetComponent<GroundEnemy>();
     }
     private void Start()
     {

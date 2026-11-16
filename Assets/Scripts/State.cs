@@ -1,8 +1,8 @@
 public abstract class State
 {
     protected StateController stateController;
-    protected Enemy targetEnemy;
-    public void OnStateEnter(StateController controller, Enemy enemy)
+    protected GroundEnemy targetEnemy;
+    public void OnStateEnter(StateController controller, GroundEnemy enemy)
     {
         stateController = controller;
         targetEnemy = enemy;
