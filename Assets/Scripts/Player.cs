@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -192,5 +193,13 @@ public class Player : MonoBehaviour
     public bool isFacingRight()
     {
         return facingDirection > 0;
+    }
+    public float getmaxSpeed()
+    {
+        return maxSpeed;
+    }
+    public float getXvelocity()
+    {
+        return rb.linearVelocityX;
     }
 }
