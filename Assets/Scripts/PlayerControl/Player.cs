@@ -4,28 +4,40 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
     private SpriteRenderer sr;
+    [Header("Input Actions")]
+    [SerializeField] private InputActionAsset playerControls;
+    private InputActionMap playerActionMap;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    private InputAction slideAction;
+    private InputAction wallRunAction;
+    private InputAction attackAction;
+    public bool slideInputHold;
+    public bool AttackRequested { get; private set; }
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float maxSpeed;
     [SerializeField] private float acceleration;
     [SerializeField] private float deceleration;
     private int moveInput;
+    public int MoveInput => moveInput;
     private int lastMoveInput;
-    private int facingDirection = 1;
+    public int facingDirection = 1;
     public bool isSuperSprinting;
     [Header("Jump")]
     [SerializeField] private float jumpForce;
-    [SerializeField] private float jumpForceDouble;
-    [SerializeField] private bool enableDoubleJump = true;
-    private bool jumpRequested;
-    private bool canDoubleJump;
+    public bool jumpRequested;
+    [SerializeField, Min(0f)] private float coyoteTime = 0.10f;
+    private float lastGroundedTime = float.NegativeInfinity;
+    [Header("Fall")]
+    [SerializeField] private float maxFallVelocity = 18f;
     [Header("CheckCollision")]
     [SerializeField] private Vector2 sizeWall;
     [SerializeField] private Transform wallCheck;
     public LayerMask WhatIsGround;
     [SerializeField] private float GroundCheckDistance;
     private bool WallFound;
-    [SerializeField] private bool isGrounded;
+    public bool isGrounded;
     [Header("SlideInfo")]
     [SerializeField] private float slideTimer;
     [SerializeField] private float slideSpeed;
@@ -33,15 +45,17 @@ public class Player : MonoBehaviour
     [SerializeField] private float DistanceFromHeadToCeiling;
     [HideInInspector] public float slideCoolDownTimer;
     private float slideTimerCount;
-    [SerializeField] private bool isSliding;
+    public bool isSliding;
     private bool foundCeilingOnHead;
     private bool lastSlideCombo;
 
     [Header("Wall Running")]
     [SerializeField] private float wallRunSpeed;
     [SerializeField] private float yWhenChangeDirection;
-    [SerializeField] private bool isWallRunning;
-    private bool holdWall;
+    [SerializeField] private float wallRunCooldown = 0.2f;
+    private float wallRunCooldownTimer;
+    public bool isWallRunning;
+    public bool holdWall;
     private int wallDirection;
     private float oldGravity;
 
@@ -49,50 +63,86 @@ public class Player : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         oldGravity = rb.gravityScale;
+        if (playerControls == null) {
+            Debug.LogError("PlayerControls Asset is not assigned!");
+            return;
+        }
+        playerActionMap = playerControls.FindActionMap("Player");
+
+        if (playerActionMap == null) {
+            Debug.LogError("Player Action Map not found!");
+            return;
+        }
+        moveAction = playerActionMap.FindAction("Move");
+        jumpAction = playerActionMap.FindAction("Jump");
+        slideAction = playerActionMap.FindAction("Slide");
+        wallRunAction = playerActionMap.FindAction("WallRun");
+        attackAction = playerActionMap.FindAction("Attack");
     }
+    private void OnEnable() {
+        playerActionMap?.Enable(); 
+    }
+    private void OnDisable() {
+        playerActionMap?.Disable();
+    }
+    public float velocityY => rb.linearVelocityY;
     private void Update() {
         checkInput();
-        CheckCollision();
         if (moveInput != 0) {
             facingDirection = moveInput;
             if (sr != null)
                 sr.flipX = facingDirection < 0;
-            if (wallCheck != null){
-                Vector3 p = wallCheck.localPosition;
-                p.x = Mathf.Abs(p.x) * facingDirection;
-                wallCheck.localPosition = p;
+            if (wallCheck != null) {
+                Vector3 position = wallCheck.localPosition;
+                position.x = Mathf.Abs(position.x) * facingDirection;
+                wallCheck.localPosition = position;
             }
         }
-         Keyboard k = Keyboard.current;
-        bool slideCombo = k.sKey.isPressed && moveInput != 0;
-        if (slideCombo && !lastSlideCombo) SlideButton();
+        CheckCollision();
+        UpdateCoyoteTime();
+        bool slideCombo = slideInputHold && moveInput != 0;
+        if (slideCombo && !lastSlideCombo)
+            SlideButton();
         lastSlideCombo = slideCombo;
         slideTimerCount -= Time.deltaTime;
         slideCoolDownTimer -= Time.deltaTime;
-
-        if (isGrounded) canDoubleJump = enableDoubleJump;
+        if (wallRunCooldownTimer > 0f)
+            wallRunCooldownTimer -= Time.deltaTime;
         checkForSlideCancle();
-        bool jumped = jumpRequested && HandleJump();
-        jumpRequested = false;
-        rb.gravityScale = oldGravity;
-        if (jumped || !UpdateWallRun())
-            Movement();
     }
     private void checkInput() {
-        Keyboard k = Keyboard.current;
-        if (k == null) {
+        if (moveAction == null)
+        {
             moveInput = 0;
             holdWall = false;
+            slideInputHold = false;
+            AttackRequested = false;
             lastSlideCombo = false;
             return;
         }
-        moveInput = (k.dKey.isPressed ? 1 : 0) - (k.aKey.isPressed ? 1 : 0);
-        holdWall = k.wKey.isPressed;
-        if (k.spaceKey.wasPressedThisFrame)
+        float horizontal = moveAction.ReadValue<float>();
+        moveInput = Mathf.RoundToInt(horizontal);
+        slideInputHold = slideAction != null &&
+                        slideAction.IsPressed();
+        holdWall = wallRunAction != null &&
+                wallRunAction.IsPressed();
+        if (jumpAction != null &&
+            jumpAction.WasPressedThisFrame()) {
             jumpRequested = true;
+        }
+        AttackRequested = attackAction != null &&
+                        attackAction.WasPressedThisFrame();
     }
-    private void Movement(){
-        if (WallFound)
+    private void FixedUpdate() {
+        if (rb == null || isWallRunning) return;
+        Vector2 velocity = rb.linearVelocity;
+        if (velocity.y < -maxFallVelocity) {
+            velocity.y = -maxFallVelocity;
+            rb.linearVelocity = velocity;
+        }
+    }
+    public void Movement(){
+        if (WallFound || wallRunCooldownTimer>0f)
             return;
         Vector2 velocity = rb.linearVelocity;
         if (isSliding){
@@ -103,7 +153,8 @@ public class Player : MonoBehaviour
         } else {
             bool reversing = lastMoveInput != 0 && moveInput != lastMoveInput;
             if (reversing && isSuperSprinting) {
-                velocity.x = moveInput * maxSpeed;
+                float retainedSpeed = Mathf.Abs(velocity.x);
+                velocity.x = moveInput * retainedSpeed;
             }
             else {
                 if (lastMoveInput == 0 && Mathf.Abs(velocity.x) < moveSpeed)
@@ -115,21 +166,28 @@ public class Player : MonoBehaviour
         rb.linearVelocity = velocity;
         lastMoveInput = moveInput;
     }
-    private bool HandleJump(){
-        if (isSliding) return false;
-        float force;
-        if (isGrounded){
-            force = jumpForce;
-        }else if (canDoubleJump){
-            force = jumpForceDouble;
-            canDoubleJump = false;
-        } else {
-            return false;
+    private void UpdateCoyoteTime() {
+        if (isWallRunning) {
+            lastGroundedTime = float.NegativeInfinity;
+            return;
         }
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, force);
+        if (isGrounded && velocityY <= 0f) lastGroundedTime = Time.time;
+    }
+    public bool HandleJump(){
+        if (isSliding || isWallRunning) return false;
+        if(Time.time-lastGroundedTime>coyoteTime) return false;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         isGrounded = false;
-        isWallRunning = false;
+        lastGroundedTime = float.NegativeInfinity;
         return true;
+    }
+    public void ClearJumpRequest() {
+        jumpRequested = false;
+    }
+    public bool TryJump() {
+        if(!jumpRequested) return false;
+        jumpRequested = false;
+        return HandleJump();
     }
     private void CheckCollision(){
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down,GroundCheckDistance, WhatIsGround).collider != null;
@@ -141,13 +199,17 @@ public class Player : MonoBehaviour
             isSliding = false;
     }
     public void SlideButton() {
-        if (moveInput != 0 && slideCoolDownTimer <= 0f){
+        if (!isGrounded || isWallRunning) return;
+        if (moveInput != 0 && slideCoolDownTimer <= 0f) {
             isSliding = true;
             slideTimerCount = slideTimer;
             slideCoolDownTimer = slideCoolDown;
         }
     }
-    private bool UpdateWallRun(){
+    public bool canBeginWallRun() {
+        return holdWall && isSuperSprinting && WallFound && !isSliding && wallRunCooldownTimer <= 0f;
+    }
+    public bool UpdateWallRun(){
         if (isWallRunning){
             if (!holdWall){
                 isWallRunning = false;
@@ -156,10 +218,10 @@ public class Player : MonoBehaviour
             if (moveInput == -wallDirection){
                 isWallRunning = false;
                 isSuperSprinting = true;
-                rb.linearVelocity = new Vector2(
-                    moveInput * maxSpeed, yWhenChangeDirection);
+                rb.linearVelocity = new Vector2(moveInput * maxSpeed, yWhenChangeDirection);
                 lastMoveInput = moveInput;
-                return true;
+                wallRunCooldownTimer = wallRunCooldown;
+                return false;
             }
             if (!WallFound){
                 isWallRunning = false;
@@ -173,6 +235,10 @@ public class Player : MonoBehaviour
         rb.gravityScale = 0f;
         rb.linearVelocity = new Vector2(0f, wallRunSpeed);
         return true;
+    }
+    public void stopWallRun() {
+        isWallRunning = false;
+        rb.gravityScale = oldGravity;
     }
     private void OnDrawGizmos(){
         Gizmos.DrawLine(transform.position,new Vector2(transform.position.x,transform.position.y - GroundCheckDistance));
