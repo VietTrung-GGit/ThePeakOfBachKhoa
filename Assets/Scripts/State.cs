@@ -1,14 +1,20 @@
-public abstract class State
+using System;
+
+public abstract class State<EState> where EState : Enum
 {
-    protected StateController stateController;
-    protected GroundEnemy targetEnemy;
-    public void OnStateEnter(StateController controller, GroundEnemy enemy)
+    public EState StateKey {get; private set;}
+    /*public void OnStateEnter(StateMachine<EState> controller, GroundEnemy enemy)
     {
-        stateController = controller;
+        stateMachine = controller;
         targetEnemy = enemy;
         OnEnter();
+    }*/
+
+    public State(EState key)
+    {
+        StateKey = key;
     }
-    protected virtual void OnEnter(){}
+    public virtual void OnEnter(){}
     public virtual void UpdateState(){}
     public virtual void UpdatePhysics(){}
     public virtual void OnExit(){}

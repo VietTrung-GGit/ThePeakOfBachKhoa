@@ -1082,9 +1082,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 489814752}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00bbcb58293c14f45a9e55ac27efbb73, type: 3}
+  m_Script: {fileID: 11500000, guid: 49bb4888ac76c2a4ab616a9ddc5a8605, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StateController
+  m_EditorClassIdentifier: Assembly-CSharp::GroundEnemyStateMachine
 --- !u!1 &1007385413
 GameObject:
   m_ObjectHideFlags: 0
