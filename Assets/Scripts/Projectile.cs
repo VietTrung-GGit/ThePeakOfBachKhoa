@@ -22,6 +22,5 @@ public class Projectile : MonoBehaviour
         float directionClockwise = Vector3.Dot(Vector3.Cross(baseDirection, direction.normalized).normalized, Vector3.forward) >= 0.0f? 1.0f : -1.0f;
         transform.position = Vector3.MoveTowards(transform.position, player.transform.position, moveSpeed * Time.deltaTime);
         transform.rotation = Quaternion.Euler(new Vector3 (0.0f, 0.0f, eulerBaseTurnAngle * directionClockwise));
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(new Vector3(0.0f, 0.0f, directionClockwise > 0.0f? eulerBaseTurnAngle : 360.0f - eulerBaseTurnAngle)), turnSpeed * Time.deltaTime);
     }
 }
