@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - WeakBlock
   layers:
   - Default
   - TransparentFX
@@ -11,6 +13,11 @@ TagManager:
   - Ground
   - Water
   - UI
+  - PlayerAttack
+  - 
+  - 
+  - 
+  - Background
   - 
   - 
   - 
@@ -31,12 +38,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
   m_SortingLayers:
   - name: Default
     uniqueID: 0
