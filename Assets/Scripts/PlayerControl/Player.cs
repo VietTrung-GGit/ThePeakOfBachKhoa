@@ -1,7 +1,5 @@
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
@@ -30,6 +28,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float jumpForce;
     public bool jumpRequested;
     [SerializeField, Min(0f)] private float coyoteTime = 0.10f;
+    [SerializeField, Min(0f)] private float jumpBufferTime = 0.12f;
+    private float jumpRequestTime = float.NegativeInfinity;
     private float lastGroundedTime = float.NegativeInfinity;
     [Header("Fall")]
     [SerializeField] private float maxFallVelocity = 18f;
@@ -60,9 +60,21 @@ public class Player : MonoBehaviour
     public bool holdWall;
     private int wallDirection;
     private float oldGravity;
+
+    [Header("Slide Collider")]
+    [SerializeField] private float slideHeightMultiplier = 0.5f;
+    private BoxCollider2D col;
+    private Vector2 normalSize, normalOffset;
+    private bool slideColliderApplied;
+    
+    [Header("Camera things")]
+    [SerializeField] private CameraFollow cameraFollow;
+
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
+        col = GetComponent<BoxCollider2D>();
+    if (col != null) { normalSize = col.size; normalOffset = col.offset; }
         oldGravity = rb.gravityScale;
         if (playerControls == null) {
             Debug.LogError("PlayerControls Asset is not assigned!");
@@ -93,9 +105,9 @@ public class Player : MonoBehaviour
             if (moveInput != facingDirection)
             {
                 facingDirection = moveInput;
-                cameraFollow.CallTurn();
+                cameraFollow?.CallTurn();
             }
-            if (sr != null){
+            if (sr != null)
                 sr.flipX = facingDirection < 0;
             if (wallCheck != null) {
                 Vector3 position = wallCheck.localPosition;
@@ -103,8 +115,11 @@ public class Player : MonoBehaviour
                 wallCheck.localPosition = position;
             }
         }
+
         CheckCollision();
         UpdateCoyoteTime();
+        if (jumpRequested && Time.time - jumpRequestTime > jumpBufferTime)
+            jumpRequested = false;
         bool slideCombo = slideInputHold && moveInput != 0;
         if (slideCombo && !lastSlideCombo)
             SlideButton();
@@ -114,6 +129,7 @@ public class Player : MonoBehaviour
         if (wallRunCooldownTimer > 0f)
             wallRunCooldownTimer -= Time.deltaTime;
         checkForSlideCancle();
+        UpdateSlideCollider();
     }
     private void checkInput() {
         if (moveAction == null)
@@ -134,6 +150,7 @@ public class Player : MonoBehaviour
         if (jumpAction != null &&
             jumpAction.WasPressedThisFrame()) {
             jumpRequested = true;
+            jumpRequestTime = Time.time;
         }
         AttackRequested = attackAction != null &&
                         attackAction.WasPressedThisFrame();
@@ -176,29 +193,45 @@ public class Player : MonoBehaviour
             lastGroundedTime = float.NegativeInfinity;
             return;
         }
-        if (isGrounded && velocityY <= 0f) lastGroundedTime = Time.time;
+        if (isGrounded && velocityY <= 0.1f) lastGroundedTime = Time.time;
     }
+    #region Jump
     public bool HandleJump(){
-        if (isSliding || isWallRunning) return false;
-        if(Time.time-lastGroundedTime>coyoteTime) return false;
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        if (isSliding || isWallRunning) {
+            if (isSliding)
+            {
+                Debug.Log("Player is sliding");
+            }
+            else
+            {
+                Debug.Log("Player is wall running");
+            }
+            return false;
+        }
+        
+        if(Time.time-lastGroundedTime>coyoteTime) {
+            Debug.Log("Not in coyote time" + lastGroundedTime);
+            return false;
+        }
+        Debug.Log("Jump applied");
+        float jumpImpulse = rb.mass * (jumpForce - rb.linearVelocityY);
+        rb.AddForce(Vector2.up * jumpImpulse, ForceMode2D.Impulse);
         isGrounded = false;
         lastGroundedTime = float.NegativeInfinity;
         return true;
     }
-    public void ClearJumpRequest() {
-        jumpRequested = false;
-    }
     public bool TryJump() {
-        if(!jumpRequested) return false;
+        if (!jumpRequested || Time.time - jumpRequestTime > jumpBufferTime || !HandleJump()) return false;
         jumpRequested = false;
-        return HandleJump();
+        return true;
     }
+    #endregion
     private void CheckCollision(){
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down,GroundCheckDistance, WhatIsGround).collider != null;
         WallFound = wallCheck != null && Physics2D.BoxCast(wallCheck.position, sizeWall, 0f,Vector2.zero, 0f, WhatIsGround).collider != null;
         foundCeilingOnHead = Physics2D.Raycast(transform.position, Vector2.up,DistanceFromHeadToCeiling, WhatIsGround).collider != null;
     }
+    #region Sliding
     private void checkForSlideCancle(){
         if (slideTimerCount < 0f && !foundCeilingOnHead)
             isSliding = false;
@@ -211,6 +244,22 @@ public class Player : MonoBehaviour
             slideCoolDownTimer = slideCoolDown;
         }
     }
+    private void UpdateSlideCollider() {
+    if (col == null || isSliding == slideColliderApplied) return;
+    slideColliderApplied = isSliding;
+    if (isSliding) {
+        float newHeight = normalSize.y * slideHeightMultiplier;
+        col.size = new Vector2(normalSize.x, newHeight);
+        // lower the offset so the feet stay on the ground
+        col.offset = new Vector2(normalOffset.x, normalOffset.y - (normalSize.y - newHeight) / 2f);
+    } else {
+        col.size = normalSize;
+        col.offset = normalOffset;
+    }
+    }
+    #endregion
+
+    #region WallRun
     public bool canBeginWallRun() {
         return holdWall && isSuperSprinting && WallFound && !isSliding && wallRunCooldownTimer <= 0f;
     }
@@ -245,6 +294,8 @@ public class Player : MonoBehaviour
         isWallRunning = false;
         rb.gravityScale = oldGravity;
     }
+    #endregion
+    
     private void OnDrawGizmos(){
         Gizmos.DrawLine(transform.position,new Vector2(transform.position.x,transform.position.y - GroundCheckDistance));
         Gizmos.color = Color.yellow;

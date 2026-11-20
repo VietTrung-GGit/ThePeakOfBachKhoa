@@ -1,12 +1,5 @@
-using System;
 using System.Collections;
-using System.Net.Http.Headers;
-using UnityEditor.Search;
-using UnityEditor.Tilemaps;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Rendering;
-
 
 public class CameraFollow : MonoBehaviour
 {

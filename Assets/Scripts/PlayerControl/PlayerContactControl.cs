@@ -16,9 +16,5 @@ public class PlayerContactHandler : MonoBehaviour {
             }
             return;
         }
-        if (other.CompareTag("WeakBlock") && player.isSuperSprinting) {
-            Debug.Log("Block destroyed while super printing");
-            Destroy(other);
-        }
     }
 }

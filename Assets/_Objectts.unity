@@ -8091,6 +8091,37 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!1 &157389325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 157389326}
+  m_Layer: 31
+  m_Name: groundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &157389326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 157389325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1163146974}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330794616
 GameObject:
   m_ObjectHideFlags: 0
@@ -8253,6 +8284,9 @@ GameObject:
   - component: {fileID: 1163146974}
   - component: {fileID: 1163146973}
   - component: {fileID: 1163146972}
+  - component: {fileID: 1163146979}
+  - component: {fileID: 1163146978}
+  - component: {fileID: 1163146977}
   - component: {fileID: 1163146975}
   - component: {fileID: 1163146976}
   m_Layer: 31
@@ -8274,14 +8308,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6763f972f7eae4b8c8b6dc13b4ca97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  playerControls: {fileID: -944628639613478452, guid: 18a0cfbabf9f6c94ba6900d81fb7163f, type: 3}
+  slideInputHold: 0
   moveSpeed: 5
   maxSpeed: 15
   acceleration: 20
   deceleration: 60
+  facingDirection: 1
   isSuperSprinting: 0
   jumpForce: 9
-  jumpForceDouble: 7
-  enableDoubleJump: 1
+  jumpRequested: 0
+  coyoteTime: 0.1
+  maxFallVelocity: 18
   sizeWall: {x: 0.1, y: 0.5}
   wallCheck: {fileID: 1817226460}
   WhatIsGround:
@@ -8297,7 +8335,9 @@ MonoBehaviour:
   isSliding: 0
   wallRunSpeed: -3
   yWhenChangeDirection: 12
+  wallRunCooldown: 0.2
   isWallRunning: 0
+  holdWall: 0
   cameraFollow: {fileID: 1269997987}
 --- !u!212 &1163146973
 SpriteRenderer:
@@ -8372,6 +8412,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1817226460}
+  - {fileID: 157389326}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &1163146975
@@ -8438,6 +8479,47 @@ CapsuleCollider2D:
   m_Offset: {x: -0.0055093765, y: -0.012180687}
   m_Size: {x: 0.38634777, y: 0.8800654}
   m_Direction: 0
+--- !u!114 &1163146977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163146971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b427b10f0b61f24cb5358b37e9588c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerContactHandler
+--- !u!114 &1163146978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163146971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b29e81d891a068749b1ed491b45fff55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  swordPrefab: {fileID: 6620114573048383722, guid: a67123cf784286a4bb19ce1f328db9d7, type: 3}
+  swordDuration: 0.2
+  sideDistance: 1.25
+  sideHeight: -0.14
+  downDistance: 0.9
+--- !u!114 &1163146979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1163146971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d0b77e05a8e7bf4cba0de43ca7d305d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StateController
 --- !u!1 &1269997985
 GameObject:
   m_ObjectHideFlags: 0

@@ -18,7 +18,6 @@ public class StateController : MonoBehaviour
         currentState.UpdateState();
         if (!wasWallRunning && !(currentState is WallRun))
             player.Movement();
-        player.ClearJumpRequest();
     }
     private void FixedUpdate() {
         if (currentState != null)

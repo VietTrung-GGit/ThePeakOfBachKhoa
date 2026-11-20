@@ -19,7 +19,7 @@ public class Fall : IState
             stateController.ChangeState(new Jump(player,stateController));
             return;
         }
-        if (!player.isGrounded || player.velocityY > 0f)
+        if (!player.isGrounded || player.velocityY > 0.1f)
             return;
         if (player.isSliding) {
             stateController.ChangeState(new Slide(player, stateController));
