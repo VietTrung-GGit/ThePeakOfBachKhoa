@@ -225,6 +225,7 @@ public class Player : MonoBehaviour
         jumpRequested = false;
         return true;
     }
+
     #endregion
     private void CheckCollision(){
         isGrounded = Physics2D.Raycast(transform.position, Vector2.down,GroundCheckDistance, WhatIsGround).collider != null;
@@ -313,5 +314,9 @@ public class Player : MonoBehaviour
     public float getXvelocity()
     {
         return rb.linearVelocityX;
+    }
+    public float getYVelocity()
+    {
+        return rb.linearVelocity.y;
     }
 }

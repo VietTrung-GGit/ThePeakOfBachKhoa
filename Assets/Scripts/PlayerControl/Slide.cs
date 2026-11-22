@@ -11,7 +11,7 @@ public class Slide : IState
     }
 
     public void Enter() {
-        Debug.Log("Enter Slide State");
+        //Debug.Log("Enter Slide State");
     }
 
     public void UpdateState() {
@@ -27,6 +27,6 @@ public class Slide : IState
     }
 
     public void Exit() {
-        Debug.Log("Exit Slide State");
+        //Debug.Log("Exit Slide State");
     }
 }

@@ -9,8 +9,13 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float _flipYTime = 0.5f;
     [SerializeField] private float maxAhead = 3f;
     [SerializeField] private float smoothTime = 0.5f;
+    [SerializeField] private float _fallSpeedthres = -5f;
+    [SerializeField] private float _fallMaxSpeed = -18f;
+    [SerializeField] private float _fallLookahead = -7f;
     private float  cur_ahead;
+    private float cur_fall;
     private float ahead_vel;
+    private float _fall_vel;
     private Coroutine _turnCoroutine;    
     private Player player;
 
@@ -38,9 +43,12 @@ public class CameraFollow : MonoBehaviour
         {
             cur_ahead = Mathf.SmoothDamp(cur_ahead, targetAhead, ref ahead_vel, smoothTime);
         }
+        
+        float fallT = Mathf.InverseLerp(_fallSpeedthres, _fallMaxSpeed, player.getYVelocity());
+        float targetFall = fallT * _fallLookahead;
+        cur_fall = Mathf.SmoothDamp(cur_fall, targetFall, ref _fall_vel, smoothTime * 0.5f);
 
-
-        transform.position = player.transform.position + new Vector3(cur_ahead, 0 ,0);
+        transform.position = player.transform.position + new Vector3(cur_ahead, cur_fall ,0);
     }
 
     public void CallTurn()

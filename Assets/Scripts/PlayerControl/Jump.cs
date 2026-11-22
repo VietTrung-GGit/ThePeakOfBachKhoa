@@ -12,7 +12,7 @@ public class Jump : IState
 
     public void Enter()
     {
-        Debug.Log("Enter Jump State");
+        //Debug.Log("Enter Jump State");
     }
 
     public void UpdateState() {
@@ -29,6 +29,6 @@ public class Jump : IState
     }
 
     public void Exit() {
-        Debug.Log("Exit Jump State");
+        //Debug.Log("Exit Jump State");
     }
 }

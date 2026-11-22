@@ -8,7 +8,7 @@ public class Fall : IState
         this.stateController = stateController;
     }
     public void Enter() {
-        Debug.Log("Enter Fall State");
+        //Debug.Log("Enter Fall State");
     }
     public void UpdateState() {
         if (player.canBeginWallRun()) {
@@ -33,6 +33,6 @@ public class Fall : IState
 
     public void Exit()
     {
-        Debug.Log("Exit Fall State");
+        //Debug.Log("Exit Fall State");
     }
 }

@@ -11,7 +11,7 @@ public class Run : IState {
 
     public void Enter()
     {
-        Debug.Log("Enter Run State");
+        //Debug.Log("Enter Run State");
     }
 
     public void UpdateState()
@@ -43,6 +43,6 @@ public class Run : IState {
 
     public void Exit()
     {
-       Debug.Log("Exit run state");
+       //Debug.Log("Exit run state");
     }
 }
