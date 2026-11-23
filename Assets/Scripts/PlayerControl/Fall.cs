@@ -1,9 +1,9 @@
 using UnityEngine;
 public class Fall : IState
 {
-    private Player player;
+    private OldPlayer player;
     private StateController stateController;
-    public Fall(Player player, StateController stateController) {
+    public Fall(OldPlayer player, StateController stateController) {
         this.player = player;
         this.stateController = stateController;
     }

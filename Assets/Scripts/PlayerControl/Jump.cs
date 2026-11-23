@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Jump : IState
 {
-    private Player player;
+    private OldPlayer player;
     private StateController stateController;
 
-    public Jump(Player player, StateController stateController) {
+    public Jump(OldPlayer player, StateController stateController) {
         this.player = player;
         this.stateController = stateController;
     }

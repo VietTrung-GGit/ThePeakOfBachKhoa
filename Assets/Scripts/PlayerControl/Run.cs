@@ -1,9 +1,9 @@
 using UnityEngine;
 
 public class Run : IState {
-    private Player player;
+    private OldPlayer player;
     private StateController stateController;
-    public Run(Player player, StateController stateController)
+    public Run(OldPlayer player, StateController stateController)
     {
         this.player = player;
         this.stateController = stateController;

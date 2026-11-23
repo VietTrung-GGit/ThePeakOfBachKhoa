@@ -8,12 +8,12 @@ public class PlayerContactHandler : MonoBehaviour {
     private void OnCollisionEnter2D(Collision2D collision) {
         GameObject other = collision.gameObject;
         if (other.CompareTag("Enemy")) {
-            if (player.isSuperSprinting) {
+            /*if (player.isSuperSprinting) {
                 Debug.Log("Super Sprint: Enemy destroyed!");
                 Destroy(other);
             } else {
                 Debug.Log("Trừ score do chạm enemy");
-            }
+            }*/
             return;
         }
     }

@@ -3,11 +3,11 @@ using UnityEngine;
 public class StateController : MonoBehaviour
 {
     private IState currentState;
-    private Player player;
+    private OldPlayer player;
 
     private void Awake()
     {
-        player = GetComponent<Player>();
+        player = GetComponent<OldPlayer>();
     }
     private void Start() {
         ChangeState(new Idle(player,this));

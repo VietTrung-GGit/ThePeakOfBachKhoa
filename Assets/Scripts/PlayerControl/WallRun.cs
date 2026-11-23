@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class WallRun : IState
 {
-    private Player player;
+    private OldPlayer player;
     private StateController stateController;
 
-    public WallRun(Player player, StateController stateController) {
+    public WallRun(OldPlayer player, StateController stateController) {
         this.player = player;
         this.stateController = stateController;
     }

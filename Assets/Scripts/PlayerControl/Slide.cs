@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Slide : IState
 {
-    private Player player;
+    private OldPlayer player;
     private StateController stateController;
 
-    public Slide(Player player, StateController stateController) {
+    public Slide(OldPlayer player, StateController stateController) {
         this.player = player;
         this.stateController = stateController;
     }

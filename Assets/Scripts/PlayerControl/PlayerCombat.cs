@@ -12,10 +12,10 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float sideHeight = -0.14f;
     [Header("Down Attack")]
     [SerializeField] private float downDistance = 0.9f;
-    private Player player;
+    private OldPlayer player;
     private GameObject activeSword;
     private void Awake() {
-        player = GetComponent<Player>();
+        player = GetComponent<OldPlayer>();
     }
     private void LateUpdate() {
         if (!player.AttackRequested || swordPrefab == null) return;

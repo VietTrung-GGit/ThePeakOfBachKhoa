@@ -25,9 +25,9 @@ public class CameraFollow : MonoBehaviour
     }
     void LateUpdate()
     {
-        float t = Mathf.Clamp01(Mathf.Abs(player.getXvelocity()/player.getmaxSpeed()));
+        float t = Mathf.Clamp01(Mathf.Abs(player.Velocity.x/player.maxGroundSpeed));
         float smooth = t*t*(3f-2f*t);
-        int moveDir = player.isFacingRight() ? 1 : -1;
+        int moveDir = (int) player.FacingDirection;
         float targetAhead = smooth * maxAhead * moveDir;
 
         if (smooth == 0)
@@ -51,7 +51,7 @@ public class CameraFollow : MonoBehaviour
     private IEnumerator FlipYLerp()
     {
         float start_rotation = transform.localEulerAngles.y;
-        float end_rotation = player.isFacingRight() ? 0f : 180f;
+        float end_rotation = player.FacingDirection == 1 ? 0f : 180f;
         float yRot;
 
         float elapsedTime = 0f;
