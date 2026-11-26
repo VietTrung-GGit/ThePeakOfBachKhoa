@@ -25,24 +25,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "OldSlide",
-                    "type": "Button",
-                    "id": "81d1b739-08d6-406a-bd42-0c3fdeea6c2b",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "WallRun",
-                    "type": "Button",
-                    "id": "8e8e704d-979a-4c60-82ff-e4c7f264dcc5",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Attack",
                     "type": "Button",
                     "id": "790441bb-29e1-44e2-9dd5-d2a057c1d3f2",
@@ -139,28 +121,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "88473aac-5b33-43e6-9300-7eb987742f1f",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "OldSlide",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "75167fe5-a190-497c-83c7-a73c90837de9",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "WallRun",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

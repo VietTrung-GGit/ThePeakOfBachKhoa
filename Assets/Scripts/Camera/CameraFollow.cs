@@ -25,7 +25,7 @@ public class CameraFollow : MonoBehaviour
     }
     void LateUpdate()
     {
-        float t = Mathf.Clamp01(Mathf.Abs(player.Velocity.x/player.maxGroundSpeed));
+        float t = Mathf.Clamp01(Mathf.Abs(player.PlayerRigidbody.linearVelocityX/player.maxGroundSpeed));
         float smooth = t*t*(3f-2f*t);
         int moveDir = (int) player.FacingDirection;
         float targetAhead = smooth * maxAhead * moveDir;

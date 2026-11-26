@@ -11,13 +11,13 @@ public class Breakables : MonoBehaviour
     {
         if (collision.collider.CompareTag("Player"))
         {
-            OldPlayer player = collision.collider.GetComponent<OldPlayer>();
-            if (!player.isSuperSprinting)
+            Player player = collision.collider.GetComponent<Player>();
+            if (!player.IsSuperSprinting)
             {
                 return;
             }
             else{
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
     }

@@ -111,24 +111,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""OldSlide"",
-                    ""type"": ""Button"",
-                    ""id"": ""81d1b739-08d6-406a-bd42-0c3fdeea6c2b"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""WallRun"",
-                    ""type"": ""Button"",
-                    ""id"": ""8e8e704d-979a-4c60-82ff-e4c7f264dcc5"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Attack"",
                     ""type"": ""Button"",
                     ""id"": ""790441bb-29e1-44e2-9dd5-d2a057c1d3f2"",
@@ -225,28 +207,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""88473aac-5b33-43e6-9300-7eb987742f1f"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""OldSlide"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""75167fe5-a190-497c-83c7-a73c90837de9"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""WallRun"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -435,8 +395,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
-        m_Player_OldSlide = m_Player.FindAction("OldSlide", throwIfNotFound: true);
-        m_Player_WallRun = m_Player.FindAction("WallRun", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_AttackDive = m_Player.FindAction("AttackDive", throwIfNotFound: true);
         m_Player_WallRunLeft = m_Player.FindAction("WallRunLeft", throwIfNotFound: true);
@@ -525,8 +483,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
-    private readonly InputAction m_Player_OldSlide;
-    private readonly InputAction m_Player_WallRun;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_AttackDive;
     private readonly InputAction m_Player_WallRunLeft;
@@ -552,14 +508,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Jump".
         /// </summary>
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/OldSlide".
-        /// </summary>
-        public InputAction @OldSlide => m_Wrapper.m_Player_OldSlide;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/WallRun".
-        /// </summary>
-        public InputAction @WallRun => m_Wrapper.m_Player_WallRun;
         /// <summary>
         /// Provides access to the underlying input action "Player/Attack".
         /// </summary>
@@ -616,12 +564,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @OldSlide.started += instance.OnOldSlide;
-            @OldSlide.performed += instance.OnOldSlide;
-            @OldSlide.canceled += instance.OnOldSlide;
-            @WallRun.started += instance.OnWallRun;
-            @WallRun.performed += instance.OnWallRun;
-            @WallRun.canceled += instance.OnWallRun;
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
@@ -657,12 +599,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @OldSlide.started -= instance.OnOldSlide;
-            @OldSlide.performed -= instance.OnOldSlide;
-            @OldSlide.canceled -= instance.OnOldSlide;
-            @WallRun.started -= instance.OnWallRun;
-            @WallRun.performed -= instance.OnWallRun;
-            @WallRun.canceled -= instance.OnWallRun;
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
@@ -735,20 +671,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnJump(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "OldSlide" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnOldSlide(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "WallRun" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnWallRun(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Attack" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
